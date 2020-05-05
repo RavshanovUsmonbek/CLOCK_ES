@@ -13,7 +13,6 @@
 typedef unsigned char uch;
 typedef unsigned int ui;
 
-
 //////////////// Normal Clock's vars //////////////////////////////
 uch sec, cnt, min, hour, month, day, week_day;
 ui year;
@@ -77,14 +76,34 @@ char is_leap_year(int y) // utility function for determining leap year
 }
 int month_day_count(ui month, ui year)
 {
-	unsigned int const month_days[]={31,28,31,30,31,30,31,31,30,31,30,31};
+	ui const month_days[]={31,28,31,30,31,30,31,31,30,31,30,31};
 	if (month==2 && is_leap_year(year))
 	{
 		return 29;
 	}
 	return month_days[month-1];
 }
-
+void disable_alarm_clock(void)
+{
+			min_alarm=0;
+			hour_alarm=0;
+			day_alarm=0;
+			month_alarm=0;
+			year_alarm=0;
+			step=1;
+			isset_alarm=0;
+			temp_year=year;
+			
+			// clearing temp variables
+			for (uch i=0;i<4;i++)
+			{
+				temp_arr[i]=0;
+				if (i>1)
+				{
+					temp_arr[i]=1;
+				}
+			}
+}
 void normal_clock_logic(void)
 {
 	cnt++;
@@ -213,7 +232,6 @@ void alarm_clock_display(void)
 	}
 }
 
-	
 ISR(TIMER0_COMP_vect)
 {
 	if(!is_stopped)
@@ -241,7 +259,8 @@ ISR(INT0_vect)
 	{
 		switch(step)
 		{
-			case 1:if (temp_arr[0]+1>=60)
+			case 1:
+			if (temp_arr[0]+1>=60)
 			{
 				temp_arr[0]=0;
 			}
@@ -251,7 +270,8 @@ ISR(INT0_vect)
 			}
 			break;
 			
-			case 2:if (temp_arr[1]+1>=24)
+			case 2:
+			if (temp_arr[1]+1>=24)
 			{
 				temp_arr[1]=0;
 			}
@@ -261,7 +281,8 @@ ISR(INT0_vect)
 			}
 			break;
 			
-			case 3:if (temp_arr[3]+1>12)
+			case 3:
+			if (temp_arr[3]+1>12)
 			{
 				temp_arr[3]=1;
 			}
@@ -274,7 +295,8 @@ ISR(INT0_vect)
 			case 4: temp_year++;
 			break;
 			
-			case 5:	if (temp_arr[2]+1>month_day_count(temp_arr[3], temp_year))
+			case 5:	
+			if (temp_arr[2]+1>month_day_count(temp_arr[3], temp_year))
 			{
 				temp_arr[2]=1;
 			}
@@ -322,25 +344,7 @@ ISR(INT2_vect)
 	}
 	else if(mode==0)
 	{
-		min_alarm=0;
-		hour_alarm=0;
-		day_alarm=0;
-		month_alarm=0;
-		year_alarm=0;
-		step=1;
-		isset_alarm=0;
-		temp_year=year;
-		
-		// clearing temp variables
-		for (uch i=0;i<4;i++)
-		{
-			temp_arr[i]=0;
-			if (i>1)
-			{
-				temp_arr[i]=1;
-			}
-		}
-		
+		disable_alarm_clock();
 	}
 	else if(mode==2)
 	{
@@ -376,7 +380,7 @@ ISR(INT2_vect)
 			}
 			break;
 			
-			case 4: if (temp_year-1>year)
+			case 4: if (temp_year-1>=year)
 					{
 						temp_year--;
 					}
@@ -619,6 +623,7 @@ int main(void)
 	_delay_ms(2);
 	char prev=mode;
 	char prev_step = step;
+	char was_alarm_on =0;
     /* Replace with your application code */
     while (1) 
     {
@@ -630,11 +635,13 @@ int main(void)
 		if (alarm_clock_check_logic(min,hour,day,month,year)==1)
 		{
 			led_blink();
+			was_alarm_on=1;
 		}
-		else
+		if (was_alarm_on==1 && alarm_clock_check_logic(min,hour,day,month,year)==0)
 		{
+			disable_alarm_clock();
 			PORTB = 0xff;
-			_delay_ms(300);
+			_delay_ms(2);
 		}
 		switch(mode)
 		{
