@@ -30,11 +30,14 @@ char* week_arr[7]={"MON","TUE", "WEN", "THU", "FRI", "SAT", "SUN"};
 // clock data stored in these vars
 char min_alarm=0, hour_alarm=0, day_alarm=0, month_alarm=0;
 ui year_alarm=2020;
-uch step = 1;
+uch step = 0;
 uch isset_alarm = 0;
 uch temp_arr[4]={0,0,1,1};
 ui temp_year=2020;
 uch is_current_date=0;
+uch type_of_alarm;
+// type --> 1 --> date based
+// type --> 0 --> time based
 /////////////////////////////////////////////////////////////////
 
 void init_timer()
@@ -92,9 +95,13 @@ void disable_alarm_clock(void)
 			day_alarm=0;
 			month_alarm=0;
 			year_alarm=0;
-			step=1;
+			
+			step=0;
+			
 			isset_alarm=0;
+			is_current_date=0;
 			temp_year=year;
+			type_of_alarm=77;
 			
 			// clearing temp variables
 			for (uch i=0;i<4;i++)
@@ -170,9 +177,19 @@ void stop_watch_logic(void)
 }
 uch alarm_clock_check_logic(uch min, uch hour, uch day, uch month, ui year)
 {
-	if(min_alarm==min && hour_alarm==hour && day_alarm==day && month_alarm==month && year_alarm==year)
+	if (type_of_alarm==1)
 	{
-		return 1;
+		if(min_alarm==min && hour_alarm==hour && day_alarm==day && month_alarm==month && year_alarm==year)
+		{
+			return 1;
+		}
+	} 
+	else
+	{
+		if (min_alarm==min && hour_alarm==hour)
+		{
+			return 1;
+		}
 	}
 	return 0;
 }
@@ -235,6 +252,59 @@ void alarm_clock_display(void)
 	}
 }
 
+void simple_alarm_display(void)
+{
+	if (!isset_alarm)
+	{
+		switch(step)
+		{
+			case 4:
+			LCD_pos(2,0);
+			LCD_STR("ALARM | HOUR");
+			LCD_pos(7,1);
+			LCD_CHAR((temp_arr[1]/10)+'0');
+			LCD_CHAR((temp_arr[1]%10)+'0');
+			break;
+
+			case 5:
+			LCD_pos(1,0);
+			LCD_STR("ALARM | MINUTE");
+			LCD_pos(6,1);
+			LCD_CHAR((temp_arr[0]/10)+'0');
+			LCD_CHAR((temp_arr[0]%10)+'0');
+			break;
+		}
+	}
+	else if(type_of_alarm==0)
+	{
+		char AM[] = "AM";
+		char PM[] = "PM";
+		LCD_pos(2,0);
+		LCD_STR("ALARM IS ON");
+		LCD_pos(3,1);
+		
+		if(hour_alarm>12)
+		{
+			LCD_STR(PM);
+			LCD_pos(6,1);
+			LCD_CHAR((hour_alarm-12)/10+'0');
+			LCD_CHAR((hour_alarm-12)%10+'0');
+			
+		}
+		else
+		{
+			LCD_STR(AM);
+			LCD_pos(6,1);
+			LCD_CHAR((hour_alarm)/10+'0');
+			LCD_CHAR((hour_alarm)%10+'0');
+		}
+		LCD_CHAR(':');
+		LCD_CHAR((min_alarm)/10+'0');
+		LCD_CHAR((min_alarm)%10+'0');
+	}
+}
+
+
 ISR(TIMER0_COMP_vect)
 {
 	if(!is_stopped)
@@ -262,6 +332,11 @@ ISR(INT0_vect)
 	{
 		switch(step)
 		{
+			case 0:
+			type_of_alarm=1;
+			step=1;
+			break;
+
 			case 1:
 			temp_year++;
 			break;
@@ -461,6 +536,11 @@ ISR(INT2_vect)
 	{
 		switch(step)
 		{
+			case 0:
+			type_of_alarm=0;
+			step=4;
+			break;
+
 			case 1:
 			if (temp_year-1>=year)
 			{
@@ -639,57 +719,60 @@ ISR(INT3_vect)
 	else if(mode==2)
 	{
 		step++;
-		switch(step)
+		if (type_of_alarm==1)
 		{
-			case 2:
-			if (temp_year==year)
+			switch(step)
 			{
-				temp_arr[3]=month;
-				is_current_date=1;
-			}
-			else
-			{
-				is_current_date=0;
-			}
+				case 2:
+				if (temp_year==year)
+				{
+					temp_arr[3]=month;
+					is_current_date=1;
+				}
+				else
+				{
+					is_current_date=0;
+				}
 
-			break;
+				break;
 
-			case 3:
-			if (temp_arr[3]==month && is_current_date==1)
-			{
-				is_current_date=1;
-				temp_arr[2]=day;
-			}
-			else
-			{
-				is_current_date=0;
-			}
-	
-			break;
-			
-			case 4:
-			if (temp_arr[2]==day && is_current_date==1)
-			{
-				is_current_date=1;
-				temp_arr[1]=hour;
-			}
-			else{is_current_date=0;}
-			break;
+				case 3:
+				if (temp_arr[3]==month && is_current_date==1)
+				{
+					is_current_date=1;
+					temp_arr[2]=day;
+				}
+				else
+				{
+					is_current_date=0;
+				}
+				
+				break;
+				
+				case 4:
+				if (temp_arr[2]==day && is_current_date==1)
+				{
+					is_current_date=1;
+					temp_arr[1]=hour;
+				}
+				else{is_current_date=0;}
+				break;
 
-			case 5:
-			if (temp_arr[1]==hour && is_current_date==1)
-			{
-				is_current_date=1;
-				temp_arr[0]=min;
+				case 5:
+				if (temp_arr[1]==hour && is_current_date==1)
+				{
+					is_current_date=1;
+					temp_arr[0]=min;
+				}
+				else{is_current_date=0;}
+				break;
 			}
-			else{is_current_date=0;}
-			break;
 		}
+		
 		if (step>5)
 		{
-			step=1; // this means end of time setting
+			step=0; // this means end of time setting
 			isset_alarm=1;
-				
 			min_alarm=temp_arr[0];
 			hour_alarm=temp_arr[1];
 			day_alarm=temp_arr[2];
@@ -993,7 +1076,23 @@ int main(void)
 				cursor_home();
 				prev_step=step;
 			}
-			display_alarm_time();
+			if (step==0 && isset_alarm==0)
+			{
+				LCD_pos(1,0);
+				LCD_STR("TYPE OF ALARM");
+				LCD_pos(1,1);
+				LCD_STR("DATE");
+				LCD_pos(10,1);
+				LCD_STR("TIME");
+			}
+			if (type_of_alarm==1)
+			{
+				display_alarm_time();
+			}
+			else if (type_of_alarm==0)
+			{
+				simple_alarm_display();
+			}
 			break;
 
 			case 3:

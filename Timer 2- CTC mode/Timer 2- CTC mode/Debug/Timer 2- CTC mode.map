@@ -24,6 +24,7 @@ min_stp_w           0x2               main.o
 sec_stp_w           0x2               main.o
 hour                0x1               main.o
 week_day            0x1               main.o
+type_of_alarm       0x1               main.o
 min                 0x1               main.o
 year                0x2               main.o
 sec                 0x1               main.o
@@ -275,7 +276,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000     0x1b30
+.text           0x00000000     0x1db8
  *(.vectors)
  .vectors       0x00000000       0x8c C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.3.300/gcc/dev/atmega128/avr51/crtatmega128.o
                 0x00000000                __vector_default
@@ -404,69 +405,72 @@ END GROUP
                 0x0000023c       0x66 main.o
                 0x0000023c                month_day_count
  .text.disable_alarm_clock
-                0x000002a2       0x40 main.o
+                0x000002a2       0x4a main.o
                 0x000002a2                disable_alarm_clock
  .text.normal_clock_logic
-                0x000002e2       0xc6 main.o
-                0x000002e2                normal_clock_logic
+                0x000002ec       0xc6 main.o
+                0x000002ec                normal_clock_logic
  .text.stop_watch_logic
-                0x000003a8       0x8e main.o
-                0x000003a8                stop_watch_logic
+                0x000003b2       0x8e main.o
+                0x000003b2                stop_watch_logic
  .text.alarm_clock_check_logic
-                0x00000436       0x4c main.o
-                0x00000436                alarm_clock_check_logic
+                0x00000440       0x6e main.o
+                0x00000440                alarm_clock_check_logic
  .text.led_blink
-                0x00000482       0x2c main.o
-                0x00000482                led_blink
+                0x000004ae       0x2c main.o
+                0x000004ae                led_blink
  .text.alarm_clock_display
-                0x000004ae      0x260 main.o
-                0x000004ae                alarm_clock_display
+                0x000004da      0x260 main.o
+                0x000004da                alarm_clock_display
+ .text.simple_alarm_display
+                0x0000073a      0x1cc main.o
+                0x0000073a                simple_alarm_display
  .text.__vector_15
-                0x0000070e       0x5c main.o
-                0x0000070e                __vector_15
+                0x00000906       0x5c main.o
+                0x00000906                __vector_15
  .text.__vector_1
-                0x0000076a      0x30e main.o
-                0x0000076a                __vector_1
+                0x00000962      0x31c main.o
+                0x00000962                __vector_1
  .text.__vector_2
-                0x00000a78       0x5c main.o
-                0x00000a78                __vector_2
+                0x00000c7e       0x5c main.o
+                0x00000c7e                __vector_2
  .text.__vector_3
-                0x00000ad4      0x318 main.o
-                0x00000ad4                __vector_3
+                0x00000cda      0x326 main.o
+                0x00000cda                __vector_3
  .text.__vector_4
-                0x00000dec      0x178 main.o
-                0x00000dec                __vector_4
+                0x00001000      0x182 main.o
+                0x00001000                __vector_4
  .text.display_normal_mode
-                0x00000f64      0x368 main.o
-                0x00000f64                display_normal_mode
+                0x00001182      0x386 main.o
+                0x00001182                display_normal_mode
  .text.display_stop_watch
-                0x000012cc      0x1ac main.o
-                0x000012cc                display_stop_watch
+                0x00001508      0x1ac main.o
+                0x00001508                display_stop_watch
  .text.display_alarm_time
-                0x00001478      0x264 main.o
-                0x00001478                display_alarm_time
+                0x000016b4      0x264 main.o
+                0x000016b4                display_alarm_time
  .text.time_setup
-                0x000016dc      0x29c main.o
-                0x000016dc                time_setup
- .text.main     0x00001978      0x136 main.o
-                0x00001978                main
+                0x00001918      0x29c main.o
+                0x00001918                time_setup
+ .text.main     0x00001bb4      0x182 main.o
+                0x00001bb4                main
  .text.libgcc.div
-                0x00001aae       0x26 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_divmodhi4.o)
-                0x00001aae                _div
-                0x00001aae                __divmodhi4
- .text.libgcc   0x00001ad4       0x12 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_tablejump2.o)
-                0x00001ad4                __tablejump2__
+                0x00001d36       0x26 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_divmodhi4.o)
+                0x00001d36                _div
+                0x00001d36                __divmodhi4
+ .text.libgcc   0x00001d5c       0x12 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_tablejump2.o)
+                0x00001d5c                __tablejump2__
  .text.libgcc.mul
-                0x00001ae6       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_umulhisi3.o)
-                0x00001ae6                __umulhisi3
+                0x00001d6e       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_umulhisi3.o)
+                0x00001d6e                __umulhisi3
  .text.libgcc.div
-                0x00001b04       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_udivmodhi4.o)
-                0x00001b04                __udivmodhi4
-                0x00001b2c                . = ALIGN (0x2)
+                0x00001d8c       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_udivmodhi4.o)
+                0x00001d8c                __udivmodhi4
+                0x00001db4                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00001b2c        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
-                0x00001b2c                _exit
-                0x00001b2c                exit
+ .fini9         0x00001db4        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
+                0x00001db4                _exit
+                0x00001db4                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -485,11 +489,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00001b2c        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
+ .fini0         0x00001db4        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
  *(.fini0)
-                0x00001b30                _etext = .
+                0x00001db8                _etext = .
 
-.data           0x00800100      0x16e load address 0x00001b30
+.data           0x00800100      0x184 load address 0x00001db8
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -499,82 +503,82 @@ END GROUP
  .data.temp_arr
                 0x00800102        0x4 main.o
                 0x00800102                temp_arr
- .data.step     0x00800106        0x1 main.o
-                0x00800106                step
  .data.year_alarm
-                0x00800107        0x2 main.o
-                0x00800107                year_alarm
+                0x00800106        0x2 main.o
+                0x00800106                year_alarm
  .data.week_arr
-                0x00800109        0xe main.o
-                0x00800109                week_arr
+                0x00800108        0xe main.o
+                0x00800108                week_arr
  .data.month_arr
-                0x00800117       0x18 main.o
-                0x00800117                month_arr
+                0x00800116       0x18 main.o
+                0x00800116                month_arr
  .data.is_stopped
-                0x0080012f        0x2 main.o
-                0x0080012f                is_stopped
+                0x0080012e        0x2 main.o
+                0x0080012e                is_stopped
  .data.step_time_set
-                0x00800131        0x1 main.o
-                0x00800131                step_time_set
+                0x00800130        0x1 main.o
+                0x00800130                step_time_set
  *(.gnu.linkonce.d*)
  *(.rodata)
- .rodata        0x00800132       0x18 main.o
+ .rodata        0x00800131       0x18 main.o
  *(.rodata*)
  .rodata.str1.1
-                0x0080014a      0x123 main.o
+                0x00800149      0x13b main.o
  *(.gnu.linkonce.r*)
-                0x0080026e                . = ALIGN (0x2)
- *fill*         0x0080026d        0x1 
-                0x0080026e                _edata = .
-                0x0080026e                PROVIDE (__data_end, .)
+                0x00800284                . = ALIGN (0x2)
+                0x00800284                _edata = .
+                0x00800284                PROVIDE (__data_end, .)
 
-.bss            0x0080026e       0x18
-                0x0080026e                PROVIDE (__bss_start, .)
+.bss            0x00800284       0x1a
+                0x00800284                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
  .bss.is_current_date
-                0x0080026e        0x1 main.o
-                0x0080026e                is_current_date
+                0x00800284        0x1 main.o
+                0x00800284                is_current_date
  .bss.isset_alarm
-                0x0080026f        0x1 main.o
-                0x0080026f                isset_alarm
+                0x00800285        0x1 main.o
+                0x00800285                isset_alarm
+ .bss.step      0x00800286        0x1 main.o
+                0x00800286                step
  .bss.month_alarm
-                0x00800270        0x1 main.o
-                0x00800270                month_alarm
+                0x00800287        0x1 main.o
+                0x00800287                month_alarm
  .bss.day_alarm
-                0x00800271        0x1 main.o
-                0x00800271                day_alarm
+                0x00800288        0x1 main.o
+                0x00800288                day_alarm
  .bss.hour_alarm
-                0x00800272        0x1 main.o
-                0x00800272                hour_alarm
+                0x00800289        0x1 main.o
+                0x00800289                hour_alarm
  .bss.min_alarm
-                0x00800273        0x1 main.o
-                0x00800273                min_alarm
- .bss.mode      0x00800274        0x1 main.o
-                0x00800274                mode
+                0x0080028a        0x1 main.o
+                0x0080028a                min_alarm
+ .bss.mode      0x0080028b        0x1 main.o
+                0x0080028b                mode
  *(COMMON)
- COMMON         0x00800275       0x11 main.o
-                0x00800275                cnt
-                0x00800276                month
-                0x00800277                min_stp_w
-                0x00800279                sec_stp_w
-                0x0080027b                hour
-                0x0080027c                week_day
-                0x0080027d                min
-                0x0080027e                year
-                0x00800280                sec
-                0x00800281                day
-                0x00800282                hour_stp_w
-                0x00800284                cnt_stp_w
-                0x00800286                PROVIDE (__bss_end, .)
-                0x00001b30                __data_load_start = LOADADDR (.data)
-                0x00001c9e                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x0080028c       0x12 main.o
+                0x0080028c                cnt
+                0x0080028d                month
+                0x0080028e                min_stp_w
+                0x00800290                sec_stp_w
+                0x00800292                hour
+                0x00800293                week_day
+                0x00800294                type_of_alarm
+                0x00800295                min
+                0x00800296                year
+                0x00800298                sec
+                0x00800299                day
+                0x0080029a                hour_stp_w
+                0x0080029c                cnt_stp_w
+                0x0080029e                PROVIDE (__bss_end, .)
+                0x00001db8                __data_load_start = LOADADDR (.data)
+                0x00001f3c                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800286        0x0
+.noinit         0x0080029e        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
  *(.noinit*)
                 [!provide]                PROVIDE (__noinit_end, .)
-                0x00800286                _end = .
+                0x0080029e                _end = .
                 [!provide]                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
@@ -639,42 +643,42 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000      0x110
+.debug_aranges  0x00000000      0x118
  *(.debug_aranges)
  .debug_aranges
-                0x00000000      0x110 main.o
+                0x00000000      0x118 main.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x237e
+.debug_info     0x00000000     0x2785
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x780 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.3.300/gcc/dev/atmega128/avr51/crtatmega128.o
- .debug_info    0x00000780     0x1bfe main.o
+ .debug_info    0x00000780     0x2005 main.o
 
-.debug_abbrev   0x00000000      0xa44
+.debug_abbrev   0x00000000      0xa4f
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x718 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.3.300/gcc/dev/atmega128/avr51/crtatmega128.o
- .debug_abbrev  0x00000718      0x32c main.o
+ .debug_abbrev  0x00000718      0x337 main.o
 
-.debug_line     0x00000000     0x1212
+.debug_line     0x00000000     0x13bc
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x169 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.3.300/gcc/dev/atmega128/avr51/crtatmega128.o
- .debug_line    0x00000169     0x10a9 main.o
+ .debug_line    0x00000169     0x1253 main.o
 
-.debug_frame    0x00000000      0x3b0
+.debug_frame    0x00000000      0x3e4
  *(.debug_frame)
- .debug_frame   0x00000000      0x3b0 main.o
+ .debug_frame   0x00000000      0x3e4 main.o
 
-.debug_str      0x00000000      0x6b7
+.debug_str      0x00000000      0x6da
  *(.debug_str)
  .debug_str     0x00000000      0x27d C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.3.300/gcc/dev/atmega128/avr51/crtatmega128.o
- .debug_str     0x0000027d      0x43a main.o
-                                0x482 (size before relaxing)
+ .debug_str     0x0000027d      0x45d main.o
+                                0x4a5 (size before relaxing)
 
-.debug_loc      0x00000000     0x1375
+.debug_loc      0x00000000     0x15c7
  *(.debug_loc)
- .debug_loc     0x00000000     0x1375 main.o
+ .debug_loc     0x00000000     0x15c7 main.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -694,9 +698,9 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000      0x100
+.debug_ranges   0x00000000      0x108
  *(.debug_ranges)
- .debug_ranges  0x00000000      0x100 main.o
+ .debug_ranges  0x00000000      0x108 main.o
 
 .debug_macro
  *(.debug_macro)
