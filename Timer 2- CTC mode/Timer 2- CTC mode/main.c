@@ -17,6 +17,7 @@ typedef unsigned int ui;
 uch sec, cnt, min, hour, month, day, week_day;
 ui year;
 uch mode = 0; 
+uch step_time_set=1;
 //////////////////////////////////////////////////////////////////////////
 
 /////////////////// Stopwatch's vars ///////////////////////////////////
@@ -25,7 +26,7 @@ ui cnt_stp_w, sec_stp_w, min_stp_w, hour_stp_w, is_stopped=1;
 
 ///////////////////////// ALARM CLOCK VARS //////////////////////////////////
 char* month_arr[12]={"JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
-
+char* week_arr[7]={"MON","TUE", "WEN", "THU", "FRI", "SAT", "SUN"};
 // clock data stored in these vars
 char min_alarm=0, hour_alarm=0, day_alarm=0, month_alarm=0;
 ui year_alarm=2020;
@@ -352,6 +353,73 @@ ISR(INT0_vect)
 		}
 		
 	}
+	else if (mode==3) // time setting mode
+	{
+		switch(step_time_set)
+		{
+			case 1:
+			year++;
+			break;
+			
+			case 2:
+			if (month+1>12)
+			{
+				month=1;
+			}
+			else
+			{
+				month++;
+			}
+			break;
+			
+			case 3:
+
+			if (day+1>month_day_count(month, year))
+			{
+				day=1;
+			}
+			else
+			{
+				day++;
+			}
+
+			break;
+			case 4:
+			if (hour+1>=24)
+			{
+				hour=0;
+			}
+			else
+			{
+				hour++;
+			}
+			break;
+			
+			case 5:
+			if (min+1>=60)
+			{
+				min=0;
+			}
+			else
+			{
+				min++;
+			}
+			break;
+
+			case 6:
+			if (week_day+1>=7)
+			{
+				week_day=1;
+			} 
+			else
+			{
+				week_day++;
+			}
+			break;
+			default: break;
+		}
+		
+	}
 }
 
 ISR(INT1_vect)
@@ -489,13 +557,80 @@ ISR(INT2_vect)
 			default: break;
 		}
 	}
+	else if (mode==3) // time setting mode for decreasing values
+	{
+		switch(step_time_set)
+		{
+			case 1:
+				year--;
+			break;
+			
+			case 2:
+			if (month-1<=0)
+			{
+				month=12;
+			}
+			else
+			{
+				month--;
+			}
+			break;
+			
+			case 3:
+			if (day-1<=0)
+			{
+				day=month_day_count(month,year);
+			}
+			else
+			{
+				day--;
+			}
+			break;
+
+			case 4:
+			if (hour-1<0)
+			{
+				hour=23;
+			}
+			else
+			{
+				hour--;
+			}
+			break;
+
+			case 5:
+			if (min-1<0)
+			{
+				min=59;
+			}
+			else
+			{
+				min--;
+			}
+			break;
+
+			case 6:
+			if (week_day-1<1)
+			{
+				week_day=1;
+			} 
+			else
+			{
+				week_day--;
+			}
+			break;
+			default: LCD_Clear();
+					LCD_STR("STEP has incorrect value");
+		 break;
+		}
+	}
 }
 
 ISR(INT3_vect)
 {
 	if (mode==0)
 	{
-		//code for normal clock
+		mode=3; // time setting mode
 	}
 	else if(mode==1)
 	{
@@ -552,7 +687,7 @@ ISR(INT3_vect)
 		}
 		if (step>5)
 		{
-			step=7; // this means end of time setting
+			step=1; // this means end of time setting
 			isset_alarm=1;
 				
 			min_alarm=temp_arr[0];
@@ -570,6 +705,16 @@ ISR(INT3_vect)
 					temp_arr[i]=1;
 				}
 			}
+		}
+	}
+	else if (mode==3)
+	{
+		step_time_set++;
+	
+		if (step_time_set>6)
+		{
+			step_time_set=1; // this means end of time setting
+			mode=0;
 		}
 	}
 }
@@ -737,17 +882,71 @@ void display_alarm_time(void)
 		alarm_clock_display();
 	}
 }
+void time_setup(void)
+{
+	switch(step_time_set)
+		{
+		case 1:
+		LCD_pos(2,0);
+		LCD_STR("TIME | YEAR ");
+		LCD_pos(6,1);
+		LCD_CHAR((year)/1000+'0');
+		LCD_CHAR((year/100)%10+'0');
+		LCD_CHAR((year/10)%10+'0');
+		LCD_CHAR((year)%10+'0');
+		break;
+		
+		case 2:
+		LCD_pos(2,0);
+		LCD_STR("TIME | MONTH ");
+		LCD_pos(6,1);
+		LCD_STR(month_arr[month-1]);
+		break;
+		
+		case 3:
+		LCD_pos(2,0);
+		LCD_STR("TIME | DAY ");
+		LCD_pos(7,1);
+		LCD_CHAR((day/10)+'0');
+		LCD_CHAR((day%10)+'0');
+		break;
+		
+		case 4:
+		LCD_pos(2,0);
+		LCD_STR("TIME | HOUR");
+		LCD_pos(7,1);
+		LCD_CHAR((hour/10)+'0');
+		LCD_CHAR((hour%10)+'0');
+		break;
+
+		case 5:
+		LCD_pos(1,0);
+		LCD_STR("TIME | MINUTE");
+		LCD_pos(6,1);
+		LCD_CHAR((min/10)+'0');
+		LCD_CHAR((min%10)+'0');
+		break;
+		case 6:
+		LCD_pos(1,0);
+		LCD_STR("TIME | WEEKDAY");
+		LCD_pos(6,1);
+		LCD_STR(week_arr[week_day-1]);
+		case 7:
+		break;
+	}
+
+
+}
 
 int main(void)
 {
-	
 	cnt=0;
 	sec=0;
 	min=10;
 	hour=12;
 	day = 15;
-	week_day=7;
-	month = 3;
+	week_day=5;
+	month = 5;
 	year = 2020;
 	
 	init_timer();
@@ -761,6 +960,7 @@ int main(void)
 	_delay_ms(2);
 	char prev=mode;
 	char prev_step = step;
+	char prev_step_time= step_time_set;
 	char was_alarm_on =0;
     /* Replace with your application code */
     while (1) 
@@ -780,6 +980,7 @@ int main(void)
 			disable_alarm_clock();
 			PORTB = 0xff;
 			_delay_ms(2);
+			was_alarm_on=0;
 		}
 		switch(mode)
 		{
@@ -793,6 +994,16 @@ int main(void)
 				prev_step=step;
 			}
 			display_alarm_time();
+			break;
+
+			case 3:
+				if (prev_step_time!=step_time_set)
+				{
+					LCD_Clear();
+					cursor_home();
+					prev_step_time=step_time_set;
+				}
+				time_setup();
 			break;
 			default: display_normal_mode(); break;
 		}
