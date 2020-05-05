@@ -33,6 +33,7 @@ uch step = 1;
 uch isset_alarm = 0;
 uch temp_arr[4]={0,0,1,1};
 ui temp_year=2020;
+uch is_current_date=0;
 /////////////////////////////////////////////////////////////////
 
 void init_timer()
@@ -188,29 +189,6 @@ void alarm_clock_display(void)
 		switch(step)
 		{
 			case 1:
-			LCD_pos(1,0);
-			LCD_STR("ALARM | MINUTE");
-			LCD_pos(6,1);
-			LCD_CHAR((temp_arr[0]/10)+'0');
-			LCD_CHAR((temp_arr[0]%10)+'0');
-			break;
-			
-			case 2:
-			LCD_pos(2,0);
-			LCD_STR("ALARM | HOUR");
-			LCD_pos(7,1);
-			LCD_CHAR((temp_arr[1]/10)+'0');
-			LCD_CHAR((temp_arr[1]%10)+'0');
-			break;
-			
-			case 3:
-			LCD_pos(2,0);
-			LCD_STR("ALARM | MONTH ");
-			LCD_pos(6,1);
-			LCD_STR(month_arr[temp_arr[3]-1]);
-			break;
-			
-			case 4:
 			LCD_pos(2,0);
 			LCD_STR("ALARM | YEAR ");
 			LCD_pos(6,1);
@@ -219,13 +197,37 @@ void alarm_clock_display(void)
 			LCD_CHAR((temp_year/10)%10+'0');
 			LCD_CHAR((temp_year)%10+'0');
 			break;
-			case 5:
+			
+			case 2:
+			LCD_pos(2,0);
+			LCD_STR("ALARM | MONTH ");
+			LCD_pos(6,1);
+			LCD_STR(month_arr[temp_arr[3]-1]);
+			break;
+			
+			case 3:
 			LCD_pos(2,0);
 			LCD_STR("ALARM | DAY ");
 			LCD_pos(7,1);
 			LCD_CHAR((temp_arr[2]/10)+'0');
 			LCD_CHAR((temp_arr[2]%10)+'0');
 			break;
+			
+			case 4:
+			LCD_pos(2,0);
+			LCD_STR("ALARM | HOUR");
+			LCD_pos(7,1);
+			LCD_CHAR((temp_arr[1]/10)+'0');
+			LCD_CHAR((temp_arr[1]%10)+'0');
+			break;
+
+			case 5:
+			LCD_pos(1,0);
+			LCD_STR("ALARM | MINUTE");
+			LCD_pos(6,1);
+			LCD_CHAR((temp_arr[0]/10)+'0');
+			LCD_CHAR((temp_arr[0]%10)+'0');
+
 			case 7:
 			break;
 		}
@@ -260,49 +262,90 @@ ISR(INT0_vect)
 		switch(step)
 		{
 			case 1:
-			if (temp_arr[0]+1>=60)
-			{
-				temp_arr[0]=0;
-			}
-			else
-			{
-				temp_arr[0]++;
-			}
+			temp_year++;
 			break;
 			
 			case 2:
-			if (temp_arr[1]+1>=24)
+			if (is_current_date==1)
 			{
-				temp_arr[1]=0;
+				if (temp_arr[3]+1>month && (temp_arr[3]+1)<=12)
+				{
+					temp_arr[3]++;
+				}
 			}
 			else
 			{
-				temp_arr[1]++;
+				if (temp_arr[3]+1>12)
+				{
+					temp_arr[3]=1;
+				}
+				else
+				{
+					temp_arr[3]++;
+				}
 			}
 			break;
 			
 			case 3:
-			if (temp_arr[3]+1>12)
+			if (is_current_date==1)
 			{
-				temp_arr[3]=1;
+				if (temp_arr[2]+1>day && temp_arr[2]+1<=month_day_count(temp_arr[3], temp_year))
+				{
+					temp_arr[2]++;
+				}
 			}
 			else
 			{
-				temp_arr[3]++;
+				if (temp_arr[2]+1>month_day_count(temp_arr[3], temp_year))
+				{
+					temp_arr[2]=1;
+				}
+				else
+				{
+					temp_arr[2]++;
+				}
 			}
 			break;
 			
-			case 4: temp_year++;
+			case 4: 
+			if (is_current_date==1)
+			{
+				if (temp_arr[1]+1>hour && (temp_arr[1]+1)<=23)
+				{
+					temp_arr[1]++;
+				}
+			}
+			else
+			{
+				if (temp_arr[1]+1>=24)
+				{
+					temp_arr[1]=0;
+				}
+				else
+				{
+					temp_arr[1]++;
+				}
+			}
 			break;
 			
 			case 5:	
-			if (temp_arr[2]+1>month_day_count(temp_arr[3], temp_year))
+			if (is_current_date==1)
 			{
-				temp_arr[2]=1;
-			}
+				if (temp_arr[0]+1>min && (temp_arr[0]+1)<=59)
+				{
+					temp_arr[0]++;
+				}
+			} 
 			else
 			{
-				temp_arr[2]++;
+				if (temp_arr[0]+1>=60)
+				{
+					temp_arr[0]=0;
+				}
+				else
+				{
+					temp_arr[0]++;
+				}	
 			}
 			break;
 			default: break;
@@ -350,50 +393,99 @@ ISR(INT2_vect)
 	{
 		switch(step)
 		{
-			case 1:if (temp_arr[0]-1<0)
+			case 1:
+			if (temp_year-1>=year)
 			{
-				temp_arr[0]=59;
-			}
-			else
-			{
-				temp_arr[0]--;
+				temp_year--;
 			}
 			break;
 			
-			case 2:if (temp_arr[1]-1<0)
+			case 2:
+			if (is_current_date==1)
 			{
-				temp_arr[1]=23;
+				if (temp_arr[3]-1>=month)
+				{
+					temp_arr[3]--;
+				}
 			}
 			else
 			{
-				temp_arr[1]--;
+				if (temp_arr[3]-1<=0)
+				{
+					temp_arr[3]=12;
+				}
+				else
+				{
+					temp_arr[3]--;
+				}
 			}
 			break;
 			
-			case 3:if (temp_arr[3]-1<=0)
+			case 3:
+			if (is_current_date==1)
 			{
-				temp_arr[3]=12;
+				if (!(temp_arr[2]-1<day))
+				{
+					temp_arr[2]--;
+				}
 			}
 			else
 			{
-				temp_arr[3]--;
+				if (temp_arr[2]-1<=0)
+				{
+					temp_arr[2]=month_day_count(temp_arr[3],temp_year);
+				}
+				else
+				{
+					temp_arr[2]--;
+				}
 			}
 			break;
-			
-			case 4: if (temp_year-1>=year)
-					{
-						temp_year--;
-					}
-					break;
-			case 5:	if (temp_arr[2]-1<=0)
+
+			case 4:
+			if (is_current_date==1)
 			{
-				temp_arr[2]=month_day_count(temp_arr[3],temp_year);
+
+				if (!(temp_arr[1]-1<hour))
+				{
+					temp_arr[1]--;
+				}
 			}
 			else
 			{
-				temp_arr[2]--;
+				if (temp_arr[1]-1<0)
+				{
+					temp_arr[1]=23;
+				}
+				else
+				{
+					temp_arr[1]--;
+				}
+			}
+			break; 
+
+			case 5:	
+			if (is_current_date==1)
+			{
+
+				if (!(temp_arr[0]-1<min))
+				{
+					temp_arr[0]--;
+				}
+			}
+			else
+			{				
+				if (temp_arr[0]-1<0)
+				{
+					temp_arr[0]=59;
+				}
+				else
+				{
+					temp_arr[0]--;
+				}
 			}
 			break;
+
 			default: break;
 		}
 	}
@@ -412,6 +504,52 @@ ISR(INT3_vect)
 	else if(mode==2)
 	{
 		step++;
+		switch(step)
+		{
+			case 2:
+			if (temp_year==year)
+			{
+				temp_arr[3]=month;
+				is_current_date=1;
+			}
+			else
+			{
+				is_current_date=0;
+			}
+
+			break;
+
+			case 3:
+			if (temp_arr[3]==month && is_current_date==1)
+			{
+				is_current_date=1;
+				temp_arr[2]=day;
+			}
+			else
+			{
+				is_current_date=0;
+			}
+	
+			break;
+			
+			case 4:
+			if (temp_arr[2]==day && is_current_date==1)
+			{
+				is_current_date=1;
+				temp_arr[1]=hour;
+			}
+			else{is_current_date=0;}
+			break;
+
+			case 5:
+			if (temp_arr[1]==hour && is_current_date==1)
+			{
+				is_current_date=1;
+				temp_arr[0]=min;
+			}
+			else{is_current_date=0;}
+			break;
+		}
 		if (step>5)
 		{
 			step=7; // this means end of time setting
@@ -551,7 +689,7 @@ void display_stop_watch(void)
 	
 }
 
-void display_alarm_clock(void)
+void display_alarm_time(void)
 {
 	if (isset_alarm)
 	{
@@ -605,11 +743,11 @@ int main(void)
 	
 	cnt=0;
 	sec=0;
-	min=0;
-	hour=23;
-	day = 31;
+	min=10;
+	hour=12;
+	day = 15;
 	week_day=7;
-	month = 12;
+	month = 3;
 	year = 2020;
 	
 	init_timer();
@@ -654,7 +792,7 @@ int main(void)
 				cursor_home();
 				prev_step=step;
 			}
-			display_alarm_clock();
+			display_alarm_time();
 			break;
 			default: display_normal_mode(); break;
 		}
